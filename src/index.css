@@ -1,0 +1,96 @@
+:root {
+  --color-cream: #fef7ef;
+  --color-cream-card: #f9f6ed;
+  --color-soft-card: #f8f0ed;
+  --color-lavender: #f6f5ff;
+  --color-lavender-strong: #e5e8f9;
+  --color-primary: #574d8c;
+  --color-primary-strong: #352c57;
+  --color-primary-soft: #6c63a6;
+  --color-brown: #704614;
+  --color-text: #151219;
+  --color-muted: #4f485c;
+  --color-border: rgba(87, 77, 140, 0.28);
+  --color-shadow: rgba(38, 29, 69, 0.18);
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-cream);
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-block-start: 5.75rem;
+}
+
+body {
+  min-inline-size: 20rem;
+  min-block-size: 100svh;
+  margin: 0;
+  background: var(--color-cream);
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font: 1rem/1.5 var(--font-sans);
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+#root {
+  min-block-size: 100svh;
+}
+
+::selection {
+  color: white;
+  background: var(--color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
