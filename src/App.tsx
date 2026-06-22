@@ -59,6 +59,16 @@ interface FooterGroup {
   readonly links: readonly NavItem[]
 }
 
+interface VideoSectionContent {
+  readonly id: string
+  readonly eyebrow: string
+  readonly title: string
+  readonly text: string
+  readonly placeholder: string
+  readonly youtubeEmbedUrl?: string
+  readonly isReversed?: boolean
+}
+
 interface LogoProps {
   readonly className?: string
 }
@@ -92,6 +102,10 @@ interface PlanCardProps {
 
 interface FooterGroupProps {
   readonly group: FooterGroup
+}
+
+interface VideoSectionProps {
+  readonly section: VideoSectionContent
 }
 
 interface MenuIconProps {
@@ -211,6 +225,26 @@ const PLANS: readonly Plan[] = [
       'Prioridad para nuevas funciones de seguimiento',
     ],
     isRecommended: true,
+  },
+]
+
+const VIDEO_SECTIONS: readonly VideoSectionContent[] = [
+  {
+    id: 'about-team-video',
+    eyebrow: 'About the team',
+    title: 'Conoce al equipo detrás de CareConnect',
+    text: 'Espacio reservado para el video de YouTube sobre el equipo. Cuando tengamos el enlace, este bloque mostrará el video manteniendo el mismo estilo visual de la landing.',
+    placeholder: 'Video About the team pendiente',
+    youtubeEmbedUrl: 'https://www.youtube.com/embed/ZwQVJLCs5eM',
+  },
+  {
+    id: 'about-product-video',
+    eyebrow: 'About the product',
+    title: 'Mira cómo CareConnect organiza el cuidado diario',
+    text: 'Espacio reservado para el video de YouTube sobre el producto. Aquí irá la explicación visual de la app, sus funciones y el valor para familias y cuidadores.',
+    placeholder: 'Video About the product pendiente',
+    youtubeEmbedUrl: 'https://www.youtube.com/embed/YFN2_9v4vJA',
+    isReversed: true,
   },
 ]
 
@@ -515,6 +549,40 @@ function FooterGroupColumn({ group }: FooterGroupProps) {
   )
 }
 
+function VideoSection({ section }: VideoSectionProps) {
+  const className = section.isReversed ? 'video-section__grid video-section__grid--reversed' : 'video-section__grid'
+  const sectionToneClassName = section.isReversed ? 'section-lavender' : 'section-cream'
+
+  return (
+    <section className={`video-section ${sectionToneClassName}`} id={section.id} aria-labelledby={`${section.id}-title`}>
+      <div className={`container ${className}`}>
+        <div className="video-section__copy">
+          <p className="video-section__eyebrow">{section.eyebrow}</p>
+          <h2 id={`${section.id}-title`}>{section.title}</h2>
+          <p>{section.text}</p>
+        </div>
+
+        <div className="video-frame" aria-label={section.placeholder}>
+          {section.youtubeEmbedUrl ? (
+            <iframe
+              src={section.youtubeEmbedUrl}
+              title={section.placeholder}
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <div className="video-frame__placeholder">
+              <span className="video-frame__play" aria-hidden="true" />
+              <p>{section.placeholder}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -627,6 +695,10 @@ function App() {
             ))}
           </div>
         </section>
+
+        {VIDEO_SECTIONS.map((section) => (
+          <VideoSection key={section.id} section={section} />
+        ))}
 
         <section className="benefits-section section-lavender" id="beneficios" aria-labelledby="benefits-title">
           <div className="container section-heading">

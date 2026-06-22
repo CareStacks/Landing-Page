@@ -448,6 +448,113 @@
   line-height: 1.14;
 }
 
+.video-section {
+  padding-block: clamp(4.5rem, 8vw, 7rem);
+}
+
+.video-section__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(24rem, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.video-section__grid--reversed .video-section__copy {
+  order: 2;
+}
+
+.video-section__copy {
+  display: grid;
+  align-content: center;
+  gap: 1.35rem;
+}
+
+.video-section__eyebrow {
+  color: var(--color-primary);
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.video-section__copy h2 {
+  max-inline-size: 36rem;
+  color: var(--color-primary-strong);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+
+.video-section__copy > p:not(.video-section__eyebrow) {
+  max-inline-size: 35rem;
+  color: #000;
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.22;
+}
+
+.video-frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(53, 44, 87, 0.28);
+  border-radius: 0.625rem;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.9), transparent 28%),
+    linear-gradient(135deg, var(--color-lavender-strong), white);
+  box-shadow: 0 1.2rem 2.4rem rgba(38, 29, 69, 0.16);
+}
+
+.video-frame iframe {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+}
+
+.video-frame iframe:focus-visible {
+  outline: 0.1875rem solid color-mix(in srgb, var(--color-primary) 72%, white);
+  outline-offset: -0.35rem;
+}
+
+.video-frame__placeholder {
+  display: grid;
+  min-block-size: 100%;
+  place-items: center;
+  gap: 1rem;
+  padding: clamp(2rem, 5vw, 4rem);
+  color: var(--color-primary-strong);
+  text-align: center;
+}
+
+.video-frame__placeholder p {
+  max-inline-size: 22rem;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.08;
+}
+
+.video-frame__play {
+  display: grid;
+  place-items: center;
+  inline-size: clamp(4.5rem, 8vw, 6.25rem);
+  block-size: clamp(4.5rem, 8vw, 6.25rem);
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 1rem 2rem rgba(87, 77, 140, 0.2);
+}
+
+.video-frame__play::before {
+  content: '';
+  inline-size: 0;
+  block-size: 0;
+  margin-inline-start: 0.35rem;
+  border-block: 0.85rem solid transparent;
+  border-inline-start: 1.2rem solid white;
+}
+
 .benefits-section {
   padding-block: clamp(4.5rem, 8vw, 6.2rem) clamp(4rem, 8vw, 6rem);
 }
@@ -950,6 +1057,14 @@
     min-block-size: 22rem;
   }
 
+  .video-section__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .video-section__grid--reversed .video-section__copy {
+    order: 0;
+  }
+
   .steps-grid::before {
     display: none;
   }
@@ -1040,6 +1155,15 @@
   .feature-card--wide {
     min-block-size: auto;
     padding: 1.6rem;
+  }
+
+  .video-section__copy {
+    text-align: center;
+  }
+
+  .video-section__copy h2,
+  .video-section__copy > p:not(.video-section__eyebrow) {
+    margin-inline: auto;
   }
 
   .plan-card {
