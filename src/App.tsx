@@ -235,7 +235,7 @@ const VIDEO_SECTIONS: readonly VideoSectionContent[] = [
     title: 'Conoce al equipo detrás de CareConnect',
     text: 'Espacio reservado para el video de YouTube sobre el equipo. Cuando tengamos el enlace, este bloque mostrará el video manteniendo el mismo estilo visual de la landing.',
     placeholder: 'Video About the team pendiente',
-    youtubeEmbedUrl: 'https://www.youtube.com/embed/ZwQVJLCs5eM',
+    youtubeEmbedUrl: 'https://www.youtube.com/watch?v=GTx1UYV9Y-o&list=RDGTx1UYV9Y-o&start_radio=1&pp=oAcB',
   },
   {
     id: 'about-product-video',
