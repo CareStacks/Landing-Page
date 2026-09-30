@@ -1,76 +1,19 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import heroImage from './assets/heroImg.png'
 import './App.css'
+import { ICON_NAME } from './content'
+import type { ContentCard, IconContentCard, FeatureCard, Plan, FooterGroup, VideoSectionContent, IconName, LandingContent } from './content'
 
 const ASSETS = {
   heroImage,
   checkIcon: '/figma-assets/check-octagon.svg',
 } as const
 
-const ICON_NAME = {
-  BELL: 'bell',
-  CALENDAR: 'calendar',
-  CHART: 'chart',
-  CLIPBOARD: 'clipboard',
-  FILES: 'files',
-  FOLDER: 'folder',
-  HEART: 'heart',
-  MAIL: 'mail',
-  PILL: 'pill',
-  SHIELD: 'shield',
-  SPARK: 'spark',
-  USERS: 'users',
-} as const
-
-type IconName = (typeof ICON_NAME)[keyof typeof ICON_NAME]
-
-interface NavItem {
-  readonly label: string
-  readonly href: string
-  readonly isActive?: boolean
-}
-
-interface ContentCard {
-  readonly title: string
-  readonly text: string
-}
-
-interface IconContentCard extends ContentCard {
-  readonly iconName: IconName
-}
-
-interface FeatureCard extends IconContentCard {
-  readonly isWide?: boolean
-  readonly isAccent?: boolean
-}
-
-interface Plan {
-  readonly name: string
-  readonly price: string
-  readonly period: string
-  readonly badge?: string
-  readonly features: readonly string[]
-  readonly isRecommended?: boolean
-}
-
-interface FooterGroup {
-  readonly title: string
-  readonly links: readonly NavItem[]
-}
-
-interface VideoSectionContent {
-  readonly id: string
-  readonly eyebrow: string
-  readonly title: string
-  readonly text: string
-  readonly placeholder: string
-  readonly youtubeEmbedUrl?: string
-  readonly isReversed?: boolean
-}
-
 interface LogoProps {
   readonly className?: string
+  readonly homeLabel: string
 }
 
 interface IconProps {
@@ -98,6 +41,7 @@ interface StepCardProps {
 
 interface PlanCardProps {
   readonly plan: Plan
+  readonly choosePlan: string
 }
 
 interface FooterGroupProps {
@@ -111,189 +55,6 @@ interface VideoSectionProps {
 interface MenuIconProps {
   readonly isOpen: boolean
 }
-
-const NAV_ITEMS: readonly NavItem[] = [
-  { label: 'Inicio', href: '#inicio', isActive: true },
-  { label: 'Funciones', href: '#funciones' },
-  { label: 'Beneficios', href: '#beneficios' },
-  { label: 'Precio', href: '#precio' },
-  { label: 'Contacto', href: '#contacto' },
-]
-
-const PROBLEM_CARDS: readonly IconContentCard[] = [
-  {
-    title: 'Olvidar medicación',
-    text: 'Entre horarios cambiantes, dosis distintas y tratamientos largos, es fácil saltearse una toma o repetirla sin darse cuenta.',
-    iconName: ICON_NAME.PILL,
-  },
-  {
-    title: 'Documentos dispersos',
-    text: 'Recetas, estudios e indicaciones terminan repartidos entre fotos, chats y papeles justo cuando más se necesitan.',
-    iconName: ICON_NAME.FILES,
-  },
-  {
-    title: 'Falta de seguimiento',
-    text: 'Sin un registro diario, los síntomas, cambios de ánimo y observaciones importantes se pierden antes de la próxima consulta.',
-    iconName: ICON_NAME.CHART,
-  },
-]
-
-const FEATURE_CARDS: readonly FeatureCard[] = [
-  {
-    title: 'Agenda de medicación y terapias',
-    text: 'Carga medicamentos con dosis, frecuencia, duración, responsables y notas. La rutina queda ordenada en una agenda diaria fácil de revisar.',
-    iconName: ICON_NAME.PILL,
-    isWide: true,
-  },
-  {
-    title: 'Recordatorios en tiempo real',
-    text: 'Recibe avisos antes de cada toma, cita o terapia, y marca si la tarea fue completada, omitida o necesita atención.',
-    iconName: ICON_NAME.BELL,
-  },
-  {
-    title: 'Documentos médicos digitales',
-    text: 'Guarda recetas, laboratorios, indicaciones y estudios por paciente para encontrarlos sin revolver chats ni carpetas.',
-    iconName: ICON_NAME.FOLDER,
-  },
-  {
-    title: 'Diario de seguimiento',
-    text: 'Registra síntomas, ánimo, alimentación, presión, glucosa o cualquier evento relevante para llevar datos concretos a la consulta.',
-    iconName: ICON_NAME.CLIPBOARD,
-  },
-  {
-    title: 'Acceso compartido',
-    text: 'Invita familiares o cuidadores con permisos claros para ver, actualizar tareas y coordinar el cuidado sin mensajes cruzados.',
-    iconName: ICON_NAME.USERS,
-    isAccent: true,
-  },
-]
-
-const BENEFITS: readonly IconContentCard[] = [
-  {
-    title: 'Mayor tranquilidad',
-    text: 'Todos saben qué toca, qué ya se hizo y qué queda pendiente. Menos dudas, menos llamadas de último minuto.',
-    iconName: ICON_NAME.SHIELD,
-  },
-  {
-    title: 'Mejor seguimiento',
-    text: 'El historial permite detectar patrones, explicar cambios al médico y tomar decisiones con información concreta.',
-    iconName: ICON_NAME.CHART,
-  },
-  {
-    title: 'Información centralizada',
-    text: 'Agenda, documentos, notas y responsables viven en un solo lugar para que el cuidado no dependa de la memoria.',
-    iconName: ICON_NAME.FILES,
-  },
-]
-
-const STEPS: readonly ContentCard[] = [
-  {
-    title: 'Crea el perfil de cuidado',
-    text: 'Agrega al paciente, sus medicamentos, contactos médicos, documentos importantes y responsables principales.',
-  },
-  {
-    title: 'Planifica la rutina diaria',
-    text: 'Define horarios, terapias, citas y tareas recurrentes para que cada persona sepa exactamente qué debe hacer.',
-  },
-  {
-    title: 'Comparte el seguimiento',
-    text: 'La familia y los cuidadores consultan el estado actualizado y registran avances sin duplicar esfuerzos.',
-  },
-]
-
-const PLANS: readonly Plan[] = [
-  {
-    name: 'Plan Mensual',
-    price: '$15',
-    period: '/mes',
-    features: [
-      'Agenda de medicamentos y terapias',
-      'Recordatorios para citas y controles',
-      'Repositorio de documentos médicos',
-      'Acceso para familiares cercanos',
-    ],
-  },
-  {
-    name: 'Plan Anual',
-    price: '$150',
-    period: '/año',
-    badge: 'AHORRA MÁS',
-    features: [
-      'Todo lo incluido en el plan mensual',
-      'Dos meses de ahorro frente al pago mensual',
-      'Acceso familiar ampliado para cuidadores',
-      'Prioridad para nuevas funciones de seguimiento',
-    ],
-    isRecommended: true,
-  },
-]
-
-const VIDEO_SECTIONS: readonly VideoSectionContent[] = [
-  {
-    id: 'about-team-video',
-    eyebrow: 'About the team',
-    title: 'Conoce al equipo detrás de CareConnect',
-    text: 'Espacio reservado para el video de YouTube sobre el equipo. Cuando tengamos el enlace, este bloque mostrará el video manteniendo el mismo estilo visual de la landing.',
-    placeholder: 'Video About the team pendiente',
-    youtubeEmbedUrl: 'https://www.youtube.com/watch?v=GTx1UYV9Y-o&list=RDGTx1UYV9Y-o&start_radio=1&pp=oAcB',
-  },
-  {
-    id: 'about-product-video',
-    eyebrow: 'About the product',
-    title: 'Mira cómo CareConnect organiza el cuidado diario',
-    text: 'Espacio reservado para el video de YouTube sobre el producto. Aquí irá la explicación visual de la app, sus funciones y el valor para familias y cuidadores.',
-    placeholder: 'Video About the product pendiente',
-    youtubeEmbedUrl: 'https://www.youtube.com/embed/YFN2_9v4vJA',
-    isReversed: true,
-  },
-]
-
-const FOOTER_GROUPS: readonly FooterGroup[] = [
-  {
-    title: 'Producto',
-    links: [
-      { label: 'Inicio', href: '#inicio' },
-      { label: 'Funciones', href: '#funciones' },
-      { label: 'Beneficios', href: '#beneficios' },
-      { label: 'Planes', href: '#precio' },
-    ],
-  },
-  {
-    title: 'Para cuidadores',
-    links: [
-      { label: 'Organizar medicación', href: '#funciones' },
-      { label: 'Centralizar documentos', href: '#funciones' },
-      { label: 'Coordinar familia', href: '#beneficios' },
-      { label: 'Solicitar demo', href: 'mailto:hola@careconnect.app?subject=Solicitar%20demo%20de%20CareConnect' },
-    ],
-  },
-  {
-    title: 'Soporte',
-    links: [
-      { label: 'Escribir a soporte', href: 'mailto:hola@careconnect.app?subject=Necesito%20ayuda%20con%20CareConnect' },
-      { label: 'Privacidad de datos', href: 'mailto:hola@careconnect.app?subject=Consulta%20sobre%20privacidad%20de%20datos' },
-      { label: 'Contacto comercial', href: 'mailto:hola@careconnect.app?subject=Consulta%20comercial%20CareConnect' },
-    ],
-  },
-]
-
-const FOOTER_HIGHLIGHTS: readonly IconContentCard[] = [
-  {
-    title: 'Datos ordenados',
-    text: 'Cada paciente con su contexto completo.',
-    iconName: ICON_NAME.FILES,
-  },
-  {
-    title: 'Cuidado coordinado',
-    text: 'Familia y cuidadores mirando lo mismo.',
-    iconName: ICON_NAME.USERS,
-  },
-  {
-    title: 'Recordatorios claros',
-    text: 'Menos olvidos en tareas críticas.',
-    iconName: ICON_NAME.BELL,
-  },
-]
 
 function Icon({ name, className = '', title }: IconProps) {
   const iconProps = {
@@ -416,9 +177,9 @@ function Icon({ name, className = '', title }: IconProps) {
   }
 }
 
-function Logo({ className = '' }: LogoProps) {
+function Logo({ className = '', homeLabel }: LogoProps) {
   return (
-    <a className={`logo ${className}`} href="#inicio" aria-label="CareConnect, ir al inicio">
+    <a className={`logo ${className}`} href="#inicio" aria-label={homeLabel}>
       <span className="logo__mark" aria-hidden="true">
         <span className="logo__mark-vertical" />
         <span className="logo__mark-horizontal" />
@@ -508,7 +269,7 @@ function StepCard({ step, index }: StepCardProps) {
   )
 }
 
-function PlanCard({ plan }: PlanCardProps) {
+function PlanCard({ plan, choosePlan }: PlanCardProps) {
   const className = plan.isRecommended ? 'plan-card plan-card--recommended' : 'plan-card'
 
   return (
@@ -528,7 +289,7 @@ function PlanCard({ plan }: PlanCardProps) {
         ))}
       </ul>
       <a className={plan.isRecommended ? 'button button--primary' : 'button button--outline'} href="#contacto">
-        Elegir plan
+        {choosePlan}
       </a>
     </article>
   )
@@ -550,6 +311,7 @@ function FooterGroupColumn({ group }: FooterGroupProps) {
 }
 
 function VideoSection({ section }: VideoSectionProps) {
+  const [isEmbedActive, setIsEmbedActive] = useState(false)
   const className = section.isReversed ? 'video-section__grid video-section__grid--reversed' : 'video-section__grid'
   const sectionToneClassName = section.isReversed ? 'section-lavender' : 'section-cream'
 
@@ -562,20 +324,34 @@ function VideoSection({ section }: VideoSectionProps) {
           <p>{section.text}</p>
         </div>
 
-        <div className="video-frame" aria-label={section.placeholder}>
-          {section.youtubeEmbedUrl ? (
-            <iframe
-              src={section.youtubeEmbedUrl}
-              title={section.placeholder}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          ) : (
-            <div className="video-frame__placeholder">
-              <span className="video-frame__play" aria-hidden="true" />
-              <p>{section.placeholder}</p>
-            </div>
+        <div className="video-section__media">
+          <div className="video-frame" aria-label={section.placeholder}>
+            {section.youtubeEmbedUrl && isEmbedActive ? (
+              <iframe
+                src={`${section.youtubeEmbedUrl}?autoplay=1`}
+                title={section.placeholder}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : section.youtubeEmbedUrl ? (
+              <button className="video-frame__poster" type="button" aria-label={section.playLabel ?? section.placeholder} onClick={() => setIsEmbedActive(true)}>
+                {section.posterUrl && <img src={section.posterUrl} alt="" loading="lazy" />}
+                <span className="video-frame__play" aria-hidden="true" />
+                <span className="video-frame__poster-label">{section.playLabel ?? section.placeholder}</span>
+              </button>
+            ) : (
+              <div className="video-frame__placeholder">
+                <span className="video-frame__play" aria-hidden="true" />
+                <p>{section.placeholder}</p>
+              </div>
+            )}
+          </div>
+          {section.youtubeWatchUrl && section.watchLinkLabel && (
+            <a className="video-section__watch" href={section.youtubeWatchUrl} target="_blank" rel="noopener noreferrer">
+              {section.watchLinkLabel} <span aria-hidden="true">↗</span>
+            </a>
           )}
         </div>
       </div>
@@ -585,6 +361,21 @@ function VideoSection({ section }: VideoSectionProps) {
 
 function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { i18n, t } = useTranslation()
+  const locale = i18n.resolvedLanguage === 'en' ? 'en' : 'es'
+  const content = i18n.getResourceBundle(locale, 'translation') as LandingContent
+  const text = content.text
+
+  useEffect(() => {
+    document.documentElement.lang = locale
+    document.title = t('meta.title')
+    document.querySelector('meta[name="description"]')?.setAttribute('content', t('meta.description'))
+    try {
+      window.localStorage.setItem('careconnect-locale', locale)
+    } catch {
+      // The selector still works when storage is unavailable.
+    }
+  }, [locale, t])
 
   const mobileMenuClassName = isMobileMenuOpen ? 'site-header__menu site-header__menu--open' : 'site-header__menu'
 
@@ -599,7 +390,7 @@ function App() {
   return (
     <>
       <a className="skip-link" href="#contenido">
-        Saltar al contenido principal
+        {text.skipLink}
       </a>
 
       <header
@@ -611,29 +402,33 @@ function App() {
         }}
       >
         <div className="site-header__inner">
-          <Logo />
-          <button
-            className="menu-toggle"
-            type="button"
-            aria-controls="site-navigation"
-            aria-expanded={isMobileMenuOpen}
-            aria-label={isMobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
-            onClick={toggleMobileMenu}
-          >
-            <MenuIcon isOpen={isMobileMenuOpen} />
-          </button>
+          <Logo homeLabel={text.homeLabel} />
           <div className={mobileMenuClassName} id="site-navigation">
-            <nav className="site-nav" aria-label="Navegación principal">
-              {NAV_ITEMS.map((item) => (
+            <nav className="site-nav" aria-label={text.mainNavigation}>
+              {content.navItems.map((item) => (
                 <a key={item.href} href={item.href} aria-current={item.isActive ? 'page' : undefined} onClick={closeMobileMenu}>
                   {item.label}
                 </a>
               ))}
             </nav>
             <a className="button button--small button--primary site-header__cta" href="#precio" onClick={closeMobileMenu}>
-              Probar app
+              {text.tryApp}
             </a>
           </div>
+          <div className="language-switch" role="group" aria-label={text.languageLabel}>
+            <button type="button" lang="es" aria-label="Español" aria-pressed={locale === 'es'} onClick={() => void i18n.changeLanguage('es')}>ES</button>
+            <button type="button" lang="en" aria-label="English" aria-pressed={locale === 'en'} onClick={() => void i18n.changeLanguage('en')}>EN</button>
+          </div>
+          <button
+            className="menu-toggle"
+            type="button"
+            aria-controls="site-navigation"
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? text.closeMenu : text.openMenu}
+            onClick={toggleMobileMenu}
+          >
+            <MenuIcon isOpen={isMobileMenuOpen} />
+          </button>
         </div>
       </header>
 
@@ -641,28 +436,25 @@ function App() {
         <section className="hero-section section-cream" id="inicio" aria-labelledby="hero-title">
           <div className="container hero-section__grid">
             <div className="hero-section__content">
-              <h1 id="hero-title">Organiza el cuidado diario de tus seres queridos</h1>
-              <p>
-                Gestiona tratamientos, citas y recordatorios en un solo lugar. Una herramienta diseñada
-                para brindar paz mental a las familias y el mejor cuidado para los mayores.
-              </p>
-              <div className="hero-section__actions" aria-label="Acciones principales">
+              <h1 id="hero-title">{text.heroTitle}</h1>
+              <p>{text.heroText}</p>
+              <div className="hero-section__actions" aria-label={text.primaryActions}>
                 <a className="button button--primary" href="#precio">
-                  Comienza ahora
+                  {text.startNow}
                 </a>
                 <a className="button button--secondary" href="#funciones">
-                  Ver funciones
+                  {text.seeFeatures}
                 </a>
               </div>
             </div>
 
-            <figure className="phone-preview" aria-label="Vista previa de la app CareConnect">
+            <figure className="phone-preview" aria-label={text.previewLabel}>
               <img
                 className="phone-preview__image"
                 src={ASSETS.heroImage}
                 width="496"
                 height="851"
-                alt="Pantalla móvil de CareConnect con recordatorios y seguimiento del paciente"
+                alt={text.previewAlt}
                 fetchPriority="high"
               />
             </figure>
@@ -671,14 +463,11 @@ function App() {
 
         <section className="problems-section section-lavender" aria-labelledby="problems-title">
           <div className="container section-heading">
-            <h2 id="problems-title">El cuidado diario necesita más organización</h2>
-            <p>
-              Cuando varias personas ayudan, el problema no es la voluntad: es la falta de un sistema
-              común para coordinar decisiones, horarios e información médica.
-            </p>
+            <h2 id="problems-title">{text.problemsTitle}</h2>
+            <p>{text.problemsText}</p>
           </div>
           <div className="container problem-grid">
-            {PROBLEM_CARDS.map((card) => (
+            {content.problemCards.map((card) => (
               <ProblemCard key={card.title} card={card} />
             ))}
           </div>
@@ -686,27 +475,27 @@ function App() {
 
         <section className="features-section section-cream" id="funciones" aria-labelledby="features-title">
           <div className="container section-heading">
-            <h2 id="features-title">Funciones principales</h2>
-            <p>Herramientas concretas para convertir el cuidado diario en una rutina visible, compartida y medible.</p>
+            <h2 id="features-title">{text.featuresTitle}</h2>
+            <p>{text.featuresText}</p>
           </div>
           <div className="container feature-grid">
-            {FEATURE_CARDS.map((card) => (
+            {content.featureCards.map((card) => (
               <FeatureCardComponent key={card.title} card={card} />
             ))}
           </div>
         </section>
 
-        {VIDEO_SECTIONS.map((section) => (
+        {content.videoSections.map((section) => (
           <VideoSection key={section.id} section={section} />
         ))}
 
         <section className="benefits-section section-lavender" id="beneficios" aria-labelledby="benefits-title">
           <div className="container section-heading">
-            <h2 id="benefits-title">Pensado para pacientes, cuidadores y familias</h2>
-            <p>CareConnect baja el ruido operativo para que el equipo familiar se enfoque en cuidar, no en perseguir información.</p>
+            <h2 id="benefits-title">{text.benefitsTitle}</h2>
+            <p>{text.benefitsText}</p>
           </div>
           <div className="container benefit-grid">
-            {BENEFITS.map((card) => (
+            {content.benefits.map((card) => (
               <BenefitCard key={card.title} card={card} />
             ))}
           </div>
@@ -714,11 +503,11 @@ function App() {
 
         <section className="steps-section section-cream" aria-labelledby="steps-title">
           <div className="container section-heading">
-            <h2 id="steps-title">¿Cómo funciona?</h2>
-            <p>Un flujo simple: cargar la información una vez, planificar la rutina y mantener a todos sincronizados.</p>
+            <h2 id="steps-title">{text.stepsTitle}</h2>
+            <p>{text.stepsText}</p>
           </div>
           <div className="container steps-grid">
-            {STEPS.map((step, index) => (
+            {content.steps.map((step, index) => (
               <StepCard key={step.title} step={step} index={index} />
             ))}
           </div>
@@ -726,12 +515,12 @@ function App() {
 
         <section className="pricing-section section-lavender" id="precio" aria-labelledby="pricing-title">
           <div className="container section-heading">
-            <h2 id="pricing-title">Planes simples para el cuidado de los que más amas</h2>
-            <p>Sin funciones escondidas ni letra chica: elegí el ritmo de pago que mejor acompañe a tu familia.</p>
+            <h2 id="pricing-title">{text.pricingTitle}</h2>
+            <p>{text.pricingText}</p>
           </div>
           <div className="container pricing-grid">
-            {PLANS.map((plan) => (
-              <PlanCard key={plan.name} plan={plan} />
+            {content.plans.map((plan) => (
+              <PlanCard key={plan.name} plan={plan} choosePlan={text.choosePlan} />
             ))}
           </div>
         </section>
@@ -741,13 +530,10 @@ function App() {
             <span className="cta-card__icon" aria-hidden="true">
               <Icon name={ICON_NAME.HEART} />
             </span>
-            <h2 id="cta-title">Cuida mejor, con más orden y tranquilidad</h2>
-            <p>
-              CareConnect te ayuda a ordenar el cuidado de tus seres queridos con recordatorios,
-              documentos, seguimiento diario y coordinación familiar.
-            </p>
-            <a className="button button--light" href="mailto:hola@careconnect.app?subject=Quiero%20probar%20CareConnect">
-              Probá CareConnect
+            <h2 id="cta-title">{text.ctaTitle}</h2>
+            <p>{text.ctaText}</p>
+            <a className="button button--light" href={text.ctaHref}>
+              {text.ctaButton}
             </a>
           </div>
         </section>
@@ -756,13 +542,10 @@ function App() {
       <footer className="site-footer">
         <div className="container site-footer__inner">
           <div className="site-footer__brand">
-            <Logo />
-            <p>
-              Una app para familias que necesitan ordenar tratamientos, citas, documentos y tareas de cuidado
-              sin depender de chats interminables.
-            </p>
-            <div className="footer-highlights" aria-label="Puntos clave de CareConnect">
-              {FOOTER_HIGHLIGHTS.map((item) => (
+            <Logo homeLabel={text.homeLabel} />
+            <p>{text.footerIntro}</p>
+            <div className="footer-highlights" aria-label={text.highlightsLabel}>
+              {content.footerHighlights.map((item) => (
                 <article className="footer-highlight" key={item.title}>
                   <span aria-hidden="true">
                     <Icon name={item.iconName} />
@@ -776,25 +559,25 @@ function App() {
             </div>
           </div>
 
-          <nav className="site-footer__nav" aria-label="Navegación del pie de página">
-            {FOOTER_GROUPS.map((group) => (
+          <nav className="site-footer__nav" aria-label={text.footerNavigation}>
+            {content.footerGroups.map((group) => (
               <FooterGroupColumn key={group.title} group={group} />
             ))}
           </nav>
 
           <address className="footer-contact">
-            <h2>Contacto</h2>
+            <h2>{text.contactTitle}</h2>
             <a href="mailto:hola@careconnect.app">
               <Icon name={ICON_NAME.MAIL} />
               hola@careconnect.app
             </a>
-            <p>Atención para familias, cuidadores y equipos de salud.</p>
+            <p>{text.contactText}</p>
           </address>
         </div>
 
         <div className="container site-footer__bottom">
-          <p>© 2026 CareConnect. Todos los derechos reservados.</p>
-          <p>Diseñado para organizar el cuidado, no para reemplazar la indicación médica profesional.</p>
+          <p>{text.rights}</p>
+          <p>{text.medicalNote}</p>
         </div>
       </footer>
     </>
